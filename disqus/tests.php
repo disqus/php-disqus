@@ -6,6 +6,7 @@ define('DISQUS_API_URL', 'http://dev.disqus.org:8000/api/');
 
 require_once('PHPUnit/Framework.php');
 require_once('disqus.php');
+require_once('json.php');
 
 define('USER_API_KEY', $_SERVER['argv'][count($_SERVER['argv'])-1]);
 
@@ -140,6 +141,25 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 
 		$response = $dsq->get_thread_posts($thread_id);
 		$this->assertTrue($response !== false);
+	}
+	
+	public function test_json() {
+		$subjects = array(
+			"[1, 2, 3]",
+			"{foo: 'bar'}",
+			"{foo: 'bar', 1: true, 2: false, 3: nil, 4: [1, 2, 3]}",
+			// "'hello'",
+			// "true",
+			// "false",
+			// "nil",
+			// "1",
+		);
+		
+		foreach ($subjects as $v) {
+			$json = new JSON;
+			
+			$this->assertEquals($json->unserialize($v), json_decode($v));
+		}
 	}
 }
 
