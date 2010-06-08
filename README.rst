@@ -4,4 +4,10 @@ Please see http://groups.google.com/group/disqus-dev/web/api-1-1 for more inform
 
 Sample usage::
 
-	$dsq = new DisqusAPI();
+	$dsq = new DisqusAPI($user_api_key, $forum_api_key);
+	$username = $dsq->get_user_name();
+
+
+To run the included unit tests you will need to install PHPUnit::
+
+	php disqus/tests.php <your user_api_key>
