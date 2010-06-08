@@ -2,6 +2,8 @@
 
 date_default_timezone_set('America/Los_Angeles');
 
+define('DISQUS_API_URL', 'http://dev.disqus.org:8000/api/');
+
 require_once('PHPUnit/Framework.php');
 require_once('disqus.php');
 
@@ -13,131 +15,131 @@ if (strlen(USER_API_KEY) != 64) {
 
 class DisqusAPITest extends PHPUnit_Framework_TestCase {
 	public function test_get_user_name() {
-		$dsq = new DisqusAPI();
-		$response = $dsq->get_user_name(USER_API_KEY);
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
+		$response = $dsq->get_user_name();
 		
-		$this->assertTrue(!($response < 0));
+		$this->assertTrue($response !== false);
 	}
 
 	public function test_get_forum_list() {
-		$dsq = new DisqusAPI();
-		$response = $dsq->get_forum_list(USER_API_KEY);
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
+		$response = $dsq->get_forum_list();
 		
-		$this->assertTrue(!($response < 0));
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_list
 	 */
 	public function test_get_forum_api_key() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
+		$response = $dsq->get_forum_list();
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_forum_api_key(USER_API_KEY, $forum_id);
+		$response = $dsq->get_forum_api_key($forum_id);
 		
-		$this->assertTrue(!($response < 0));
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_list
 	 */
 	public function test_get_forum_posts() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_forum_posts(USER_API_KEY, $forum_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_posts($forum_id);
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_posts
 	 */
 	public function test_get_num_posts() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_forum_posts(USER_API_KEY, $forum_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_posts($forum_id);
+		$this->assertTrue($response !== false);
 
 		$thread_id = $response[0]->thread->id;
 
-		$response = $dsq->get_num_posts(USER_API_KEY, array($thread_id));
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_num_posts(array($thread_id));
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_list
 	 */
 	public function test_get_categories_list() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_categories_list(USER_API_KEY, $forum_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_categories_list($forum_id);
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_list
 	 */
 	public function test_get_thread_list() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_thread_list(USER_API_KEY, $forum_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_thread_list($forum_id);
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_list
 	 */
 	public function test_get_updated_threads() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_updated_threads(USER_API_KEY, $forum_id, time());
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_updated_threads($forum_id, time());
+		$this->assertTrue($response !== false);
 	}
 	
 	/**
 	 * @depends test_get_forum_posts
 	 */
 	public function test_get_thread_posts() {
-		$dsq = new DisqusAPI();
+		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 
-		$response = $dsq->get_forum_list(USER_API_KEY);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_list();
+		$this->assertTrue($response !== false);
 
 		$forum_id = $response[0]->id;
 		
-		$response = $dsq->get_forum_posts(USER_API_KEY, $forum_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_forum_posts($forum_id);
+		$this->assertTrue($response !== false);
 
 		$thread_id = $response[0]->thread->id;
 
-		$response = $dsq->get_thread_posts(USER_API_KEY, $thread_id);
-		$this->assertTrue(!($response < 0));
+		$response = $dsq->get_thread_posts($thread_id);
+		$this->assertTrue($response !== false);
 	}
 }
 
