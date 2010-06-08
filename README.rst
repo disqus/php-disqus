@@ -4,6 +4,8 @@ Please see http://groups.google.com/group/disqus-dev/web/api-1-1 for more inform
 
 Sample usage::
 
+	require('disqus/disqus.php');
+	
 	$dsq = new DisqusAPI($user_api_key, $forum_api_key);
 	$username = $dsq->get_user_name();
 
