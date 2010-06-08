@@ -66,16 +66,18 @@ class DisqusAPI {
 	var $forum_api_key;
 	var $api_version = '1.1';
 
-	function DisqusAPI($short_name=NULL, $forum_api_key=NULL) {
-		$this->short_name = $short_name;
-		$this->forum_api_key = $forum_api_key;
+	function DisqusAPI() {
 		$this->last_error = null;
 	}
 	
 	function query($method, $call, $args) {
 		$args['api_version'] = $this->api_version;
 		
-		$url = DISQUS_API_URL . '/api/' . $call;
+		$url = DISQUS_API_URL . '/api/' . $call . '/';
+		
+		foreach ($args as $key=>$value) {
+			if (empty($value)) unset($args[$key]);
+		}
 		
 		if (strtoupper($method) == 'GET') {
 			$url .= '?' . dsq_get_query_string($args);
@@ -83,26 +85,29 @@ class DisqusAPI {
 		}
 		
 		
-		$response = dsq_urlopen(
-			$url,
-			$args,
-		);
+		$response = dsq_urlopen($url, $args);
+		
+		if ($response['code'] != 200) {
+			$this->last_error = $response['data']['message'];
+			return -1;
+		}
 		
 		$data = dsq_json_decode($response['data']);
-		if(!$data || !$data['succeeded']) {
-			$this->last_error = $data['err'];
-			if($data['code'] == 'bad-credentials' || $data['code'] == 'bad-key') {
+		
+		if(!$data || !$data->succeeded) {
+			$this->last_error = $response['data']['message'];;
+			if($data->code == 'bad-credentials' || $data->code == 'bad-key') {
 				return -2;
 			} else {
 				return -1;
 			}
 		}
-		return $data['message'];
+		return $data->message;
 	}
 	
 	function get_last_error() {
 		if (!empty($this->last_error)) return;
-		return $this->last_error['code'];
+		return $this->last_error;
 	}
 
 	function get_user_name($user_api_key) {
@@ -169,7 +174,7 @@ class DisqusAPI {
 			'forum_id'		=> $forum_id,
 		);
 		
-		$data = $this->query('GET', 'get_num_posts', $params);
+		$data = $this->query('GET', 'get_categories_list', $params);
 		if ($data < 0) return false;
 		return $data;
 	}
@@ -192,7 +197,7 @@ class DisqusAPI {
 		$params = array(
 			'user_api_key'	=> $user_api_key,
 			'forum_id'		=> $forum_id,
-			'since'			=> strftime('%Y-%m-%dT%H:%M', $since),
+			'since'			=> is_string($since) ? $string : strftime('%Y-%m-%dT%H:%M', $since),
 		);
 		
 		$data = $this->query('GET', 'get_updated_threads', $params);
@@ -209,7 +214,6 @@ class DisqusAPI {
 			'filter'		=> is_array($filter) ? implode(',', $filter) : $filter,
 			'exclude'		=> is_array($exclude) ? implode(',', $exclude) : $exclude,
 		);
-		
 		$data = $this->query('GET', 'get_thread_posts', $params);
 		if ($data < 0) return false;
 		return $data;
@@ -224,7 +228,7 @@ class DisqusAPI {
 			'create_on_fail'=> $create_on_fail,
 		);
 		
-		$data = $this->query('GET', 'thread_by_identifier', $params);
+		$data = $this->query('POST', 'thread_by_identifier', $params);
 		if ($data < 0) return false;
 		return $data;
 	}
@@ -251,7 +255,7 @@ class DisqusAPI {
 			'url'			=> $url,
 		);
 		
-		$data = $this->query('GET', 'update_thread', $params);
+		$data = $this->query('POST', 'update_thread', $params);
 		if ($data < 0) return false;
 		return $data;
 	}
@@ -264,14 +268,14 @@ class DisqusAPI {
 			'author_name'	=> $author_name,
 			'author_email'	=> $author_email,
 			'partner_api_key'	=> $partner_api_key,
-			'created_at'	=> $created_at ? strftime('%Y-%m-%dT%H:%M', $created_at) : null,
+			'created_at'	=> is_string($created_at) && !empty($created_at) ? strftime('%Y-%m-%dT%H:%M', $created_at) : null,
 			'ip_address'	=> $ip_address,
 			'author_url'	=> $author_url,
 			'parent_post'	=> $parent_post,
 			'state'			=> $state,
 		);
 		
-		$data = $this->query('GET', 'create_post', $params);
+		$data = $this->query('POST', 'create_post', $params);
 		if ($data < 0) return false;
 		return $data;
 	}
@@ -283,7 +287,7 @@ class DisqusAPI {
 			'action'		=> $action,
 		);
 		
-		$data = $this->query('GET', 'moderate_post', $params);
+		$data = $this->query('POST', 'moderate_post', $params);
 		if ($data < 0) return false;
 		return $data;
 	}
