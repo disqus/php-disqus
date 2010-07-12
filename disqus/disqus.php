@@ -182,7 +182,7 @@ class DisqusAPI {
 	/**
 	 * Get a list of comments on a website.
 	 *
-	 * Both filter and exclude are multivalue arguments with coma as a divider.
+	 * Both filter and exclude are multivalue arguments with comma as a divider.
 	 * That makes is possible to use combined requests. For example, if you want
 	 * to get all deleted spam messages, your filter argument should contain
 	 * 'spam,killed' string.
@@ -275,7 +275,7 @@ class DisqusAPI {
 	/**
 	 * Get a list of comments in a thread.
 	 *
-	 * Both filter and exclude are multivalue arguments with coma as a divider.
+	 * Both filter and exclude are multivalue arguments with comma as a divider.
 	 * That makes is possible to use combined requests. For example, if you want
 	 * to get all deleted spam messages, your filter argument should contain
 	 * 'spam,killed' string. Note that values are joined by AND statement so
