@@ -110,7 +110,7 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 		$host = $url_pieces['host'] . ':' . $url_pieces['port'];
 	}
 
-	$fp = @fsockopen($url_pieces['host'], $url_pieces['port'], null, null, SOCKET_TIMEOUT);
+	$fp = @fsockopen($url_pieces['host'], $url_pieces['port'], $errno, $errstr, SOCKET_TIMEOUT);
 	if(!$fp) { return false; }
 	$req .= ($postdata_str ? 'POST' : 'GET') . ' ' . $url_pieces['path'] . " HTTP/1.1\r\n";
 	$req .= 'Host: ' . $host . "\r\n";
