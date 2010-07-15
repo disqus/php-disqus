@@ -117,18 +117,18 @@ class DisqusAPI {
 		
 		$response = dsq_urlopen($url, $args);
 		
-		// XXX: We could add in exception handling if they are using PHP5
-		if ($response['code'] != 200) {
-			$this->last_error = $response['data']['message'];
-			return false;
-		}
-		
 		$data = dsq_json_decode($response['data']);
 		
 		if(!$data || !$data->succeeded) {
-			$this->last_error = $response['data']['message'];;
+			$this->last_error = $data->message;
 			return false;
 		}
+		
+		if ($response['code'] != 200) {
+			$this->last_error = 'Unknown error';
+			return false;
+		}
+		
 		return $data->message;
 	}
 	
@@ -139,7 +139,7 @@ class DisqusAPI {
 	 *   The last recorded error from the API
 	 */
 	function get_last_error() {
-		if (!empty($this->last_error)) return;
+		if (empty($this->last_error)) return;
 		return $this->last_error;
 	}
 
