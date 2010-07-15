@@ -7,7 +7,10 @@ Sample usage::
 	require('disqus/disqus.php');
 	
 	$dsq = new DisqusAPI($user_api_key, $forum_api_key);
-	$username = $dsq->get_user_name();
+	if (($username = $dsq->get_user_name()) === false)
+	{
+	    throw new Exception($dsq->get_last_error());
+	}
 
 
 To run the included unit tests you will need to install PHPUnit::
