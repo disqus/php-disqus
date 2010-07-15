@@ -1,5 +1,6 @@
 <?php
 define('USER_AGENT', 'Disqus-WPPlugin/2.0-dev');
+define('SOCKET_TIMEOUT', 10);
 
 function dsq_get_query_string($postdata) {
 	$postdata_str = '';
@@ -56,10 +57,11 @@ function _dsq_curl_urlopen($url, $postdata, &$response, $file_name, $file_field)
 	$postdata_str = dsq_get_query_string($postdata);
 
 	$c_options = array(
-		CURLOPT_USERAGENT =>		USER_AGENT,
-		CURLOPT_RETURNTRANSFER =>	true,
-		CURLOPT_POST =>				($postdata_str ? 1 : 0),
-		CURLOPT_HTTPHEADER =>       array('Expect:')
+		CURLOPT_USERAGENT		=> USER_AGENT,
+		CURLOPT_RETURNTRANSFER	=> true,
+		CURLOPT_POST			=> ($postdata_str ? 1 : 0),
+		CURLOPT_HTTPHEADER		=> array('Expect:'),
+		CURLOPT_TIMEOUT 		=> SOCKET_TIMEOUT
 	);
 	if($postdata) {
 		$c_options[CURLOPT_POSTFIELDS] = $postdata_str;
@@ -108,7 +110,7 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 		$host = $url_pieces['host'] . ':' . $url_pieces['port'];
 	}
 
-	$fp = @fsockopen($url_pieces['host'], $url_pieces['port']);
+	$fp = @fsockopen($url_pieces['host'], $url_pieces['port'], null, null, SOCKET_TIMEOUT);
 	if(!$fp) { return false; }
 	$req .= ($postdata_str ? 'POST' : 'GET') . ' ' . $url_pieces['path'] . " HTTP/1.1\r\n";
 	$req .= 'Host: ' . $host . "\r\n";
@@ -169,19 +171,22 @@ function _dsq_fopen_urlopen($url, $postdata, &$response, $file_name, $file_field
 		$header = dsq_get_http_headers_for_request($boundary, $content, $file_name, $file_field);
 
 		$params = array('http' => array(
-			'method' => 'POST',
-			'header' => $header,
-			'content' => $content,
+			'method'	=> 'POST',
+			'header'	=> $header,
+			'content'	=> $content,
+			'timeout'	=> SOCKET_TIMEOUT
 		));
 	} else {
 		if($postdata) {
 			$params = array('http' => array(
-				'method' =>		'POST',
-				'header' =>		'Content-Type: application/x-www-form-urlencoded',
-				'content' =>	dsq_get_query_string($postdata)
+				'method'	=> 'POST',
+				'header'	=> 'Content-Type: application/x-www-form-urlencoded',
+				'content'	=> dsq_get_query_string($postdata),
+				'timeout'	=> SOCKET_TIMEOUT
 			));
 		}
 	}
+	
 
 	ini_set('user_agent', USER_AGENT);
 	$ctx = stream_context_create($params);
