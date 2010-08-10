@@ -5,8 +5,8 @@ date_default_timezone_set('America/Los_Angeles');
 define('DISQUS_API_URL', 'http://dev.disqus.org:8000/api/');
 
 require_once('PHPUnit/Framework.php');
-require_once('disqus.php');
-require_once('json.php');
+require_once(dirname(__FILE__) . '/disqus.php');
+require_once(dirname(__FILE__) . '/json.php');
 
 define('USER_API_KEY', $_SERVER['argv'][count($_SERVER['argv'])-1]);
 

@@ -11,7 +11,7 @@
  * @version		1.1
  */
 
-require_once('url.php');
+require_once(dirname(__FILE__) . '/url.php');
 
 /** @#+
  * Constants
@@ -37,7 +37,7 @@ define('DISQUS_ACTION_DELETE', 'delete');
 define('DISQUS_ACTION_KILL', 'kill');
 
 if (!extension_loaded('json')) {
-	require_once('json.php');
+	require_once(dirname(__FILE__) . '/json.php');
 	function dsq_json_decode($data) {
 		$json = new JSON;
 		return $json->unserialize($data);
