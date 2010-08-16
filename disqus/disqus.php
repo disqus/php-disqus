@@ -325,7 +325,7 @@ class DisqusAPI {
 		$params['identifier'] = $identifier;
 		$params['title'] = $title;
 		
-		return $this->call('POST', 'thread_by_identifier', $params);
+		return $this->call('thread_by_identifier', $params, true);
 	}
 	
 	/**
