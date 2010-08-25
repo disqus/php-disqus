@@ -115,8 +115,11 @@ class DisqusAPI {
 			$args = null;
 		}
 		
-		$response = dsq_urlopen($url, $args);
-		
+		if (!($response = dsq_urlopen($url, $args)) || !$response['code']) {
+			$this->last_error = 'Unable to connect to the Disqus API servers';
+			return false;
+		}
+			
 		$data = dsq_json_decode($response['data']);
 		
 		if(!$data || !$data->succeeded) {
