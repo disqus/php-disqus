@@ -2,7 +2,7 @@
 
 date_default_timezone_set('America/Los_Angeles');
 
-define('DISQUS_API_URL', 'http://dev.disqus.org:8000/api/');
+define('DISQUS_API_URL', 'http://dev.disqus.org:9000/api/');
 
 require_once('PHPUnit/Framework.php');
 require_once(dirname(__FILE__) . '/disqus.php');
