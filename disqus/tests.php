@@ -41,7 +41,7 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 		$response = $dsq->get_forum_api_key($forum_id);
 		
 		$this->assertTrue($response !== false, var_export($response, true));
-		$this->assertEquals($response, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', var_export($response, true));
+		$this->assertEquals($response, USER_API_KEY, var_export($response, true));
 	}
 	
 	/**
