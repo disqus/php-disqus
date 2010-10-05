@@ -25,7 +25,7 @@ class JSONTest extends PHPUnit_Framework_TestCase {
 		
 		$set1 = json_decode($data)->message;
 		$set2 = $this->json->unserialize($data)->message;
-		$this->assertEquals($set1[1]->id, $set2[1]->id);
+		$this->assertEquals($set1[0]->id, $set2[0]->id);
 		$this->assertEquals($set1[0], $set2[0]);
 	}
 	
