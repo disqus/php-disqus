@@ -14,6 +14,27 @@ if (strlen(USER_API_KEY) != 64) {
 	die('Syntax: phpunit tests.php <user_api_key>');
 }
 
+class JSONTest extends PHPUnit_Framework_TestCase {
+	public function setUp() {
+		$this->json = new JSON;
+	}
+	
+	public function test_decoding() {
+		$data = file_get_contents('tests/missing_ids.json');
+		$json = new JSON;
+		
+		$set1 = json_decode($data)->message;
+		$set2 = $this->json->unserialize($data)->message;
+		$this->assertEquals($set1[1]->id, $set2[1]->id);
+		$this->assertEquals($set1[0], $set2[0]);
+	}
+	
+	public function test_commas() {
+		$data = '{"message": "zeeg, was here"}';
+		$this->assertEquals(json_decode($data), $this->json->unserialize($data));
+	}
+}
+
 class DisqusAPITest extends PHPUnit_Framework_TestCase {
 	public function test_get_user_name() {
 		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
