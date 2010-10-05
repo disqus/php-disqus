@@ -1,10 +1,4 @@
 {
-   "message":[
-      {
-         "is_anonymous":false,
-         "id":"48726613"
-      }
-   ],
-   "code":"ok",
-   "succeeded":true
+   "is_anonymous": false,
+   "id": "48726613"
 }
