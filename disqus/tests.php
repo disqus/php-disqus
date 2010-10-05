@@ -40,8 +40,8 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 		
 		$response = $dsq->get_forum_api_key($forum_id);
 		
-		$this->assertTrue($response !== false);
-		$this->assertEquals($response, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+		$this->assertTrue($response !== false, var_export($response, true));
+		$this->assertEquals($response, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', var_export($response, true));
 	}
 	
 	/**
@@ -56,8 +56,8 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 		$forum_id = $response[0]->id;
 		
 		$response = $dsq->get_forum_posts($forum_id);
-		$this->assertTrue($response !== false);
-		$this->assertEquals($response[0]->id, 14535);
+		$this->assertTrue($response !== false, var_export($response, true));
+		$this->assertEquals($response[0]->id, 14535, var_export($response, true));
 	}
 	
 	/**
