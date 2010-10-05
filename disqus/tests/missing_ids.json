@@ -1,17 +1,8 @@
 {
    "message":[
       {
-         "status":"approved",
-         "imported":0,
-         "created_at":"2010-05-06T19:43",
          "is_anonymous":false,
-         "meta":null,
-         "message":"<b>help!</b>\n<blockquote><b>help!</b></blockquote>",
-         "has_been_moderated":true,
-         "ip_address":"75.101.56.240",
-         "id":"48726613",
-         "parent_post":null,
-         "points":0
+         "id":"48726613"
       }
    ],
    "code":"ok",
