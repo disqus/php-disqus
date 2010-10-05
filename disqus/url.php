@@ -267,4 +267,14 @@ function dsq_urlopen($url, $postdata=false, $file=false) {
 
 	return $response;
 }
+
+function dsq_url_method() {
+	if(function_exists('curl_init')) {
+		return 'curl';
+	} else if(ini_get('allow_url_fopen') && function_exists('stream_get_contents')) {
+		return 'fopen';
+	} else {
+		return 'fsockopen';
+	}
+}
 ?>
