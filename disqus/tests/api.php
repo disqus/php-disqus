@@ -5,33 +5,13 @@ date_default_timezone_set('America/Los_Angeles');
 define('DISQUS_API_URL', 'http://dev.disqus.org:9000/api/');
 
 require_once('PHPUnit/Framework.php');
-require_once(dirname(__FILE__) . '/disqus.php');
-require_once(dirname(__FILE__) . '/json.php');
+require_once(dirname(__FILE__) . '/../disqus.php');
+require_once(dirname(__FILE__) . '/../json.php');
 
 define('USER_API_KEY', $_SERVER['argv'][count($_SERVER['argv'])-1]);
 
 if (strlen(USER_API_KEY) != 64) {
 	die('Syntax: phpunit tests.php <user_api_key>');
-}
-
-class JSONTest extends PHPUnit_Framework_TestCase {
-	public function setUp() {
-		$this->json = new JSON;
-	}
-	
-	public function test_decoding() {
-		$data = file_get_contents('tests/missing_ids.json');
-		$json = new JSON;
-		
-		$set1 = json_decode($data);
-		$set2 = $this->json->unserialize($data);
-		$this->assertEquals($set1->id, $set2->id);
-	}
-	
-	public function test_commas() {
-		$data = '{"message": "zeeg, was here"}';
-		$this->assertEquals(json_decode($data), $this->json->unserialize($data));
-	}
 }
 
 class DisqusAPITest extends PHPUnit_Framework_TestCase {
