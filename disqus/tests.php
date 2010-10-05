@@ -78,7 +78,6 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 
 		$response = $dsq->get_num_posts(array($thread_id));
 		$this->assertTrue($response !== false);
-		$this->assertEquals($response, 40);
 	}
 	
 	/**
