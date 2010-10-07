@@ -9,7 +9,10 @@ class JSONTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_decoding() {
-		$data = file_get_contents(dirname(__FILE__).'/data/missing_ids.json');
+		$data = '{
+		  "a": false,
+		  "b": 1
+		}';
 		$set1 = json_decode($data);
 		$set2 = $this->json->unserialize($data);
 		$this->assertEquals($set1->id, $set2->id);
