@@ -16,7 +16,7 @@ function dsq_get_query_string($postdata) {
 
 
 function dsq_get_post_content($boundary, $postdata, $file_name, $file_field) {
-	if(!$file_name || !$file_field) {
+	if(empty($file_name) || empty($file_field)) {
 		return dsq_get_query_string($postdata);
 	}
 
@@ -235,7 +235,7 @@ function dsq_urlopen($url, $postdata=false, $file=false) {
 	if($file) {
 		extract($file, EXTR_PREFIX_ALL, 'file');
 	}
-	if(!$file_name || !$file_field) {
+	if(empty($file_name) || empty($file_field)) {
 		$file_name = false;
 		$file_field = false;
 	}
