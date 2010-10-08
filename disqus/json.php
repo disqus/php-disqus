@@ -273,12 +273,13 @@ class JSON
                         $state = IN_ATOMIC;
                         $i=$i+4;
                         return true;
-                    }else break 2; /* exit from switch and while */
+                    }
+                    else break 2; /* exit from switch and while */
                     break;
                 case "f":
-                    if ( substr($e,$i,4) == "false") {
+                    if ( substr($e,$i,5) == "false") {
                         $state = IN_ATOMIC;
-                        $i=$i+4;
+                        $i=$i+5;
                         return false;
                     }
                     else break 2; /* exit from switch and while */

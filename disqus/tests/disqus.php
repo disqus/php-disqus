@@ -5,8 +5,8 @@ date_default_timezone_set('America/Los_Angeles');
 define('DISQUS_API_URL', 'http://dev.disqus.org:9000/api/');
 
 require_once('PHPUnit/Framework.php');
-require_once(dirname(__FILE__) . '/disqus.php');
-require_once(dirname(__FILE__) . '/json.php');
+require_once(dirname(__FILE__) . '/../disqus.php');
+require_once(dirname(__FILE__) . '/../json.php');
 
 define('USER_API_KEY', $_SERVER['argv'][count($_SERVER['argv'])-1]);
 
@@ -19,14 +19,14 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 		$response = $dsq->get_user_name();
 		
-		$this->assertTrue($response !== false);
+		$this->assertTrue($response !== false, $dsq->get_last_error());
 	}
 
 	public function test_get_forum_list() {
 		$dsq = new DisqusAPI(USER_API_KEY, null, DISQUS_API_URL);
 		$response = $dsq->get_forum_list();
 		
-		$this->assertTrue($response !== false);
+		$this->assertTrue($response !== false, $dsq->get_last_error());
 	}
 	
 	/**
@@ -40,8 +40,8 @@ class DisqusAPITest extends PHPUnit_Framework_TestCase {
 		
 		$response = $dsq->get_forum_api_key($forum_id);
 		
-		$this->assertTrue($response !== false, var_export($response, true));
-		$this->assertEquals($response, USER_API_KEY, var_export($response, true));
+		$this->assertTrue($response !== false, $dsq->get_last_error());
+		$this->assertEquals($response, USER_API_KEY, $dsq->get_last_error());
 	}
 	
 	/**
