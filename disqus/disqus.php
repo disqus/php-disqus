@@ -45,7 +45,7 @@ if (!extension_loaded('json')) {
 } else {
 	function dsq_json_decode($data) {
 		return json_decode($data);
-	}	
+	}
 }
 
 /**
@@ -78,7 +78,7 @@ class DisqusAPI {
 		$this->api_url = $api_url;
 		$this->last_error = null;
 	}
-	
+
 	/**
 	 * Makes a call to a Disqus API method.
 	 *
@@ -93,7 +93,7 @@ class DisqusAPI {
 	 */
 	function call($method, $args=array(), $post=false) {
 		$url = $this->api_url . $method . '/';
-		
+
 		if (!isset($args['user_api_key'])) {
 			$args['user_api_key'] = $this->user_api_key;
 		}
@@ -103,38 +103,49 @@ class DisqusAPI {
 		if (!isset($args['api_version'])) {
 			$args['api_version'] = $this->api_version;
 		}
-		
+
 		foreach ($args as $key=>$value) {
 			// XXX: Disqus is lacking some exception handling and we sometimes
 			// end up with 500s when passing invalid values
 			if (empty($value)) unset($args[$key]);
 		}
-		
+
 		if (!$post) {
 			$url .= '?' . dsq_get_query_string($args);
 			$args = null;
 		}
-		
+
 		if (!($response = dsq_urlopen($url, $args)) || !$response['code']) {
+			var_dump($response);
 			$this->last_error = 'Unable to connect to the Disqus API servers';
 			return false;
 		}
-			
+
+		if ($response['code'] != 200) {
+			$this->last_error = 'DISQUS returned a bad response (HTTP '.$response['code'].')';
+			return false;
+		}
+
 		$data = dsq_json_decode($response['data']);
-		
-		if(!$data || !$data->succeeded) {
+
+		if (!$data) {
+			$this->last_error = 'No valid JSON content returned from Disqus';
+			return false;
+		}
+
+		if (!$data->succeeded) {
 			$this->last_error = $data->message;
 			return false;
 		}
-		
+
 		if ($response['code'] != 200) {
 			$this->last_error = 'Unknown error';
 			return false;
 		}
-		
+
 		return $data->message;
 	}
-	
+
 	/**
 	 * Retrieve the last error message recorded.
 	 *
@@ -155,7 +166,7 @@ class DisqusAPI {
 	function get_user_name() {
 		return $this->call('get_user_name', array(), true);
 	}
-	
+
 	/**
 	 * Returns an array of hashes representing all forums the user owns.
 	 *
@@ -178,10 +189,10 @@ class DisqusAPI {
 		$params = array(
 			'forum_id'		=> $forum_id,
 		);
-		
+
 		return $this->call('get_forum_api_key', $params);
 	}
-	
+
 	/**
 	 * Get a list of comments on a website.
 	 *
@@ -202,7 +213,7 @@ class DisqusAPI {
 	 */
 	function get_forum_posts($forum_id, $params=array()) {
 		$params['forum_id'] = $forum_id;
-		
+
 		return $this->call('get_forum_posts', $params);
 	}
 
@@ -218,23 +229,23 @@ class DisqusAPI {
 		$params = array(
 			'thread_ids'	=> is_array($thread_ids) ? implode(',', $thread_ids) : $thread_ids,
 		);
-		
+
 		return $this->call('get_num_posts', $params);
 	}
-	
+
 	/**
 	 * Returns a list of categories that were created for a website (forum) provided.
 	 *
 	 * @param $forum_id
 	 *   the unique of the forum
 	 * @return
-	 *   A hash containing category_id, title, forum_id, and is_default. 
+	 *   A hash containing category_id, title, forum_id, and is_default.
 	 */
 	function get_categories_list($forum_id) {
 		$params = array(
 			'forum_id'		=> $forum_id,
 		);
-		
+
 		return $this->call('get_categories_list', $params);
 	}
 
@@ -252,7 +263,7 @@ class DisqusAPI {
 	 */
 	function get_thread_list($forum_id, $params=array()) {
 		$params['forum_id'] = $forum_id;
-		
+
 		return $this->call('get_thread_list', $params);
 	}
 
@@ -271,7 +282,7 @@ class DisqusAPI {
 			'forum_id'		=> $forum_id,
 			'since'			=> is_string($since) ? $string : strftime('%Y-%m-%dT%H:%M', $since),
 		);
-		
+
 		return $this->call('get_updated_threads', $params);
 	}
 
@@ -302,7 +313,7 @@ class DisqusAPI {
 
 		return $this->call('get_thread_posts', $params);
 	}
-	
+
 	/**
 	 * Get or create thread by identifier.
 	 *
@@ -327,10 +338,10 @@ class DisqusAPI {
 	function thread_by_identifier($identifier, $title, $params=array()) {
 		$params['identifier'] = $identifier;
 		$params['title'] = $title;
-		
+
 		return $this->call('thread_by_identifier', $params, true);
 	}
-	
+
 	/**
 	 * Get thread by URL.
 	 *
@@ -348,10 +359,10 @@ class DisqusAPI {
 			'url'			=> $url,
 			'partner_api_key'	=> $partner_api_key,
 		);
-		
+
 		return $this->call('get_thread_by_url', $params);
 	}
-	
+
  	/**
 	 * Updates thread.
 	 *
@@ -372,10 +383,10 @@ class DisqusAPI {
 	 */
 	function update_thread($thread_id, $params=array()) {
 		$params['thread_id'] = $thread_id;
-		
+
 		return $this->call('update_thread', $params, true);
 	}
-	
+
 	/**
 	 * Creates a new post.
 	 *
@@ -405,10 +416,10 @@ class DisqusAPI {
 		$params['message'] = $message;
 		$params['author_name'] = $author_name;
 		$params['author_email'] = $author_email;
-		
+
 		return $this->call('create_post', $params, true);
 	}
-	
+
 	/**
 	 * Delete a comment or mark it as spam (or not spam).
 	 *
@@ -424,7 +435,7 @@ class DisqusAPI {
 			'post_id'		=> $post_id,
 			'action'		=> $action,
 		);
-		
+
 		return $this->call('moderate_post', $params, true);
 	}
 }

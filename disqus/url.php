@@ -190,7 +190,7 @@ function _dsq_fopen_urlopen($url, $postdata, &$response, $file_name, $file_field
 			));
 		}
 	}
-	
+
 
 	ini_set('user_agent', USER_AGENT);
 	$ctx = stream_context_create($params);
@@ -254,7 +254,7 @@ function dsq_urlopen($url, $postdata=false, $file=false) {
 				foreach ($curl_options as $option => $value) {
 					if (!curl_setopt($ch, $option, $value)) {
 						return false;
-					} 
+					}
 				}
 				return true;
 			}
