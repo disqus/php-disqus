@@ -134,12 +134,11 @@ class DisqusAPI {
 		}
 
 		if (!$data->succeeded) {
-			$this->last_error = $data->message;
-			return false;
-		}
-
-		if ($response['code'] != 200) {
-			$this->last_error = 'Unknown error';
+			if (!$data->message) {
+				$this->last_error '(No error message was received)';
+			} else {
+				$this->last_error = $data->message;
+			}
 			return false;
 		}
 
