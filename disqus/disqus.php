@@ -134,7 +134,7 @@ class DisqusAPI {
 
 		if (!$data->succeeded) {
 			if (!$data->message) {
-				$this->last_error '(No error message was received)';
+				$this->last_error = '(No error message was received)';
 			} else {
 				$this->last_error = $data->message;
 			}
