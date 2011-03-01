@@ -77,12 +77,12 @@ function _dsq_curl_urlopen($url, $postdata, &$response, $file_name, $file_field)
 	$data = curl_exec($c);
 	list($headers, $response['data']) = explode("\r\n\r\n", $data, 2);
 	
-	$response['headers'] = _dsq_get_response_headers($headers);
+	$response['headers'] = _dsq_get_response_headers($headers, $response);
 	$response['code'] = curl_getinfo($c, CURLINFO_HTTP_CODE);
 }
 
-function _dsq_get_response_headers($headers) {
-    $headers = explode("\r\n", $headers);
+function _dsq_get_response_headers($headers, &$response) {
+	$headers = explode("\r\n", $headers);
 	list($unused, $response['code'], $unused) = explode(' ', $headers[0], 3);
 	$headers = array_slice($headers, 1);
 
@@ -152,7 +152,7 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 	list($headers, $response['data']) = explode("\r\n\r\n", $buf, 2);
 
 	// Get status code from headers.
-	$headers = _dsq_get_response_headers($headers);
+	$headers = _dsq_get_response_headers($headers, $response);
 
 	// If transfer-coding is set to chunked, we need to join the message body
 	// together.
