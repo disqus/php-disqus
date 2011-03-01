@@ -127,8 +127,16 @@ class DisqusAPI {
 				    $this->last_error = 'DISQUS returned a bad response (HTTP '.$response['code'].', ReferenceID: '.$response['headers']['X-Sentry-ID'].')';
 				    return false;
 				}
+			} elseif ($response['code'] == 400) {
+				$data = dsq_json_decode($response['data']);
+				if ($data && $data->message) {
+					$this->last_error = $data->message;
+				} else {
+					$this->last_error = "DISQUS returned a bad response (HTTP ".$response['code'].")";
+				}
+				return false;
 			}
-			$this->last_error = 'DISQUS returned a bad response (HTTP '.$response['code'].')';
+			$this->last_error = "DISQUS returned a bad response (HTTP ".$response['code'].")";
 			return false;
 		}
 
