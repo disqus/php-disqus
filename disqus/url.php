@@ -60,6 +60,7 @@ function _dsq_curl_urlopen($url, $postdata, &$response, $file_name, $file_field)
 		CURLOPT_USERAGENT		=> USER_AGENT,
 		CURLOPT_RETURNTRANSFER	=> true,
 		CURLOPT_POST			=> ($postdata_str ? 1 : 0),
+		CURLOPT_HEADER			=> true,
 		CURLOPT_HTTPHEADER		=> array('Expect:'),
 		CURLOPT_TIMEOUT 		=> SOCKET_TIMEOUT
 	);
@@ -73,10 +74,28 @@ function _dsq_curl_urlopen($url, $postdata, &$response, $file_name, $file_field)
 	}
 	curl_setopt_array($c, $c_options);
 
-	$response['data'] = curl_exec($c);
+	$data = curl_exec($c);
+	list($headers, $response['data']) = explode("\r\n\r\n", $data, 2);
+	
+	$response['headers'] = _dsq_get_response_headers($headers);
 	$response['code'] = curl_getinfo($c, CURLINFO_HTTP_CODE);
 }
 
+function _dsq_get_response_headers($headers) {
+    $headers = explode("\r\n", $headers);
+	list($unused, $response['code'], $unused) = explode(' ', $headers[0], 3);
+	$headers = array_slice($headers, 1);
+
+	// Convert headers into associative array.
+	foreach($headers as $unused=>$header) {
+		$header = explode(':', $header);
+		$header[0] = trim($header[0]);
+		$header[1] = trim($header[1]);
+		$headers[strtolower($header[0])] = $header[1];
+	}
+	
+	return $headers;
+}
 
 function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_field) {
 	$buf = '';
@@ -133,21 +152,11 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 	list($headers, $response['data']) = explode("\r\n\r\n", $buf, 2);
 
 	// Get status code from headers.
-	$headers = explode("\r\n", $headers);
-	list($unused, $response['code'], $unused) = explode(' ', $headers[0], 3);
-	$headers = array_slice($headers, 1);
-
-	// Convert headers into associative array.
-	foreach($headers as $unused=>$header) {
-		$header = explode(':', $header);
-		$header[0] = trim($header[0]);
-		$header[1] = trim($header[1]);
-		$headers[strtolower($header[0])] = strtolower($header[1]);
-	}
+	$headers = _dsq_get_response_headers($headers);
 
 	// If transfer-coding is set to chunked, we need to join the message body
 	// together.
-	if(isset($headers['transfer-encoding']) && 'chunked' == $headers['transfer-encoding']) {
+	if(isset($headers['transfer-encoding']) && 'chunked' == strtolower($headers['transfer-encoding'])) {
 		$chunk_data = $response['data'];
 		$joined_data = '';
 		while(true) {
@@ -164,6 +173,7 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 	} else {
 		$length = $headers['content-length'];
 	}
+	$response['headers'] = $headers;
 }
 
 
@@ -212,6 +222,7 @@ function _dsq_fopen_urlopen($url, $postdata, &$response, $file_name, $file_field
 	}
 
 	$response['data'] = stream_get_contents($fp);
+	$response['headers'] = $headers;
 }
 
 
