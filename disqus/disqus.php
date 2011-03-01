@@ -121,6 +121,13 @@ class DisqusAPI {
 		}
 
 		if ($response['code'] != 200) {
+			if ($response['code'] == 500) {
+				// Try to grab the exception ID for better reporting
+				if (!empty($response['headers']['X-Sentry-ID'])) {
+				    $this->last_error = 'DISQUS returned a bad response (HTTP '.$response['code'].', ReferenceID: '.$response['headers']['X-Sentry-ID'].')';
+				    return false;
+				}
+			}
 			$this->last_error = 'DISQUS returned a bad response (HTTP '.$response['code'].')';
 			return false;
 		}
