@@ -167,6 +167,9 @@ class DisqusAPI {
 	 */
 	function get_last_error() {
 		if (empty($this->last_error)) return;
+		if (!is_string($this->last_error)) {
+			return var_export($this->last_error);
+		}
 		return $this->last_error;
 	}
 
