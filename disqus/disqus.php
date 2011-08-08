@@ -155,6 +155,8 @@ class DisqusAPI {
 			}
 			return false;
 		}
+		
+		$this->last_error = null;
 
 		return $data->message;
 	}
