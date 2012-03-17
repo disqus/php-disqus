@@ -258,6 +258,7 @@ function dsq_urlopen($url, $postdata=false, $file=false) {
 //
 
 	// Try curl, fsockopen, fopen + stream (PHP5 only), exec wget
+	/*
 	if(function_exists('curl_init')) {
 		if (!function_exists('curl_setopt_array')) {
 			function curl_setopt_array(&$ch, $curl_options)
@@ -277,6 +278,11 @@ function dsq_urlopen($url, $postdata=false, $file=false) {
 		// TODO: Find the failure condition for fsockopen() (sockets?)
 		_dsq_fsockopen_urlopen($url, $postdata, $response, $file_name, $file_field);
 	}
+	*/ 
+	//curl is not working, more info : http://gadelkareem.com/2012/03/16/disqus-problem-with-wordpress-unable-to-connect-to-the-disqus-api-servers/ 
+	//open urls with fsockopen
+	_dsq_fsockopen_urlopen($url, $postdata, $response, $file_name, $file_field);	
+	
 
 // returns array with keys data and code (from headers)
 
