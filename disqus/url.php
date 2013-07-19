@@ -62,8 +62,11 @@ function _dsq_curl_urlopen($url, $postdata, &$response, $file_name, $file_field)
 		CURLOPT_POST			=> ($postdata_str ? 1 : 0),
 		CURLOPT_HEADER			=> true,
 		CURLOPT_HTTPHEADER		=> array('Expect:'),
-		CURLOPT_TIMEOUT 		=> SOCKET_TIMEOUT
+		CURLOPT_TIMEOUT 		=> SOCKET_TIMEOUT,
 	);
+	if (defined('WP_PROXY_HOST') && defined('WP_PROXY_PORT')) {
+		$c_options[CURLOPT_PROXY] = WP_PROXY_HOST . ':' . WP_PROXY_PORT;
+	}
 	if($postdata) {
 		$c_options[CURLOPT_POSTFIELDS] = $postdata_str;
 	}
@@ -129,10 +132,16 @@ function _dsq_fsockopen_urlopen($url, $postdata, &$response, $file_name, $file_f
 		$host = $url_pieces['host'] . ':' . $url_pieces['port'];
 	}
 
-	$fp = @fsockopen($url_pieces['host'], $url_pieces['port'], $errno, $errstr, SOCKET_TIMEOUT);
+	$fp = null;
+	if (defined('WP_PROXY_HOST') && defined('WP_PROXY_PORT')) {
+		$fp = @fsockopen(WP_PROXY_HOST, WP_PROXY_PORT, $errno, $errstr, SOCKET_TIMEOUT);
+		$path = $url_pieces['path'];
+	} else {
+		$fp = @fsockopen($url_pieces['host'], $url_pieces['port'], $errno, $errstr, SOCKET_TIMEOUT);		
+		$path = $url_pieces['scheme'] . '://' . $host . $url_pieces['path'];
+	}
 	if(!$fp) { return false; }
 
-	$path = $url_pieces['path'];
 	if ($url_pieces['query']) $path .= '?'.$url_pieces['query'];
 
 	$req .= ($postdata_str ? 'POST' : 'GET') . ' ' . $path . " HTTP/1.1\r\n";
@@ -199,6 +208,10 @@ function _dsq_fopen_urlopen($url, $postdata, &$response, $file_name, $file_field
 				'timeout'	=> SOCKET_TIMEOUT
 			));
 		}
+	}
+
+	if (defined('WP_PROXY_HOST') && defined('WP_PROXY_PORT')) {
+		$params['http']['proxy'] = 'tcp://' . WP_PROXY_HOST . ':' . WP_PROXY_PORT;
 	}
 
 
