@@ -115,7 +115,7 @@ class DisqusAPI {
 			$args = null;
 		}
 
-		if (!($response = dsq_urlopen($url, $args)) || !$response['code']) {
+		if (!($response = $this->urlopen($url, $args)) || !$response['code']) {
 			$this->last_error = 'Unable to connect to the Disqus API servers';
 			return false;
 		}
@@ -159,6 +159,24 @@ class DisqusAPI {
 		$this->last_error = null;
 
 		return $data->message;
+	}
+
+	/**
+	 * Wrapper to provide a single interface for making an HTTP request.
+	 *
+	 * @see dsq_urlopen()
+	 *
+	 * @param	string	$url		URL to make request to.
+	 * @param	array	$postdata	(optional) If postdata is provided, the request
+	 *								method is POST with the key/value pairs as
+	 *								the data.
+	 * @param	array	$file		(optional) Should provide associative array
+	 *								with two keys: name and field.  Name should
+	 *								be the name of the file and field is the name
+	 *								of the field to POST.
+	 */
+	function urlopen($url, $postdata=false, $file=false) {
+		return dsq_urlopen($url, $postdata, $file);
 	}
 
 	/**
