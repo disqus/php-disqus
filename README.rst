@@ -1,4 +1,9 @@
+NOTICE: Deprecated
+------------------
+This project is deprecated and no longer actively maintained by `Disqus <https://disqus.com/>`_.
+
 Disqus API 1.1
+--------------
 
 Please see http://groups.google.com/group/disqus-dev/web/api-1-1 for more information.
 
